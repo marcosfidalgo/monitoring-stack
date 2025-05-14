@@ -1,27 +1,24 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: otel-demo
+  name: otel-test-trace
   namespace: monitoring
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: otel-demo
   template:
-    metadata:
-      labels:
-        app: otel-demo
     spec:
       containers:
-        - name: otel-demo
-          image: ghcr.io/open-telemetry/opentelemetry-collector-contrib/demo-client:latest
-          args: ["--otlp-endpoint=otel-collector-opentelemetry-collector:4317"]
-          env:
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "otel-collector-opentelemetry-collector:4317"
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "service.name=otel-demo"
-          ports:
-            - containerPort: 80
-
+        - name: otelcli
+          image: ghcr.io/equinix-labs/otel-cli:latest
+          command:
+            - /otel-cli
+          args:
+            - exec
+            - --endpoint=http://otel-collector-opentelemetry-collector:4318
+            - --name=test-span
+            - --service=test-otelcli
+            - --tp-print
+            - --protocol=http/protobuf
+            - --verbose
+            - echo
+            - "Hello OTEL"
+      restartPolicy: Never
