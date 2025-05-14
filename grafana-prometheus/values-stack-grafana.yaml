@@ -1,0 +1,55 @@
+nodeSelector:
+  kubernetes.azure.com/agentpool: texassystem
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "texassystem"
+    effect: "NoSchedule"
+
+grafana:
+  replicas: 1
+  adminPassword: "Excluyisteis(Bandidos)"
+  persistence:
+    enabled: true
+    storageClassName: default
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: false
+  extraEnv:
+    - name: GF_SERVER_ROOT_URL
+      value: "https://grafana.texascontrols.com"
+
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+    nodeSelector:
+      kubernetes.azure.com/agentpool: texassystem
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "texassystem"
+        effect: "NoSchedule"
+
+alertmanager:
+  alertmanagerSpec:
+    nodeSelector:
+      kubernetes.azure.com/agentpool: texassystem
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "texassystem"
+        effect: "NoSchedule"
