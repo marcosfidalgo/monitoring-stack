@@ -1,0 +1,81 @@
+# Example configuration for Loki with Azure Blob Storage
+
+loki:
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: azure
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+  ingester:
+    chunk_encoding: snappy
+  tracing:
+    enabled: true
+  querier:
+    max_concurrent: 4
+
+  storage:
+    type: azure
+    azure:
+      # Name of the Azure Blob Storage account
+      accountName: texasloki
+      # Key associated with the Azure Blob Storage account
+      #accountKey: <your-account-key>
+      # Comprehensive connection string for Azure Blob Storage account (Can be used to replace endpoint, accountName, and accountKey)
+      connectionString: DefaultEndpointsProtocol=https;AccountName=texasloki;AccountKey=nVveoKpMWdxfKT4KwKxpgutq8AdhVPBtr1wiLPBEaleLWushVcpsT1zDc3NrV3GkAiEDyyoNUO2M+AStxZ4jmw==;EndpointSuffix=core.windows.net
+      # Flag indicating whether to use Azure Managed Identity for authentication
+      useManagedIdentity: false
+      # Flag indicating whether to use a federated token for authentication
+      useFederatedToken: false
+      # Client ID of the user-assigned managed identity (if applicable)
+      #userAssignedId: <your-user-assigned-id>
+      # Timeout duration for requests made to the Azure Blob Storage account (in seconds)
+      requestTimeout: 10
+      # Domain suffix of the Azure Blob Storage service endpoint (e.g., core.windows.net)
+      endpointSuffix: core.windows.net
+    bucketNames:
+      chunks: "chunks"
+      ruler: "ruler"
+      admin: "admin"
+deploymentMode: Distributed
+
+ingester:
+  replicas: 3
+  zoneAwareReplication:
+    enabled: false
+querier:
+  replicas: 3
+  maxUnavailable: 2
+queryFrontend:
+  replicas: 2
+  maxUnavailable: 1
+queryScheduler:
+  replicas: 2
+distributor:
+  replicas: 3
+  maxUnavailable: 2
+compactor:
+  replicas: 1
+indexGateway:
+  replicas: 2
+  maxUnavailable: 1
+
+bloomPlanner:
+  replicas: 0
+bloomBuilder:
+  replicas: 0
+bloomGateway:
+  replicas: 0
+
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+singleBinary:
+  replicas: 0

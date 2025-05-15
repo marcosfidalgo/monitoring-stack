@@ -32,12 +32,20 @@ config:
 
   processors:
     batch: {}
+    memory_limiter:
+      check_interval: 5s
+      limit_mib: 400
+      spike_limit_mib: 100
 
   exporters:
     otlp/tempo:
       endpoint: tempo.monitoring.svc.cluster.local:4317
       tls:
         insecure: true
+    loki:
+      endpoint: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+      default_labels_enabled:
+        resource: true
 
   service:
     telemetry:
@@ -49,3 +57,8 @@ config:
         receivers: [otlp]
         processors: [batch]
         exporters: [otlp/tempo]
+
+      logs:
+        receivers: [otlp]
+        processors: [batch, memory_limiter]
+        exporters: [loki]
