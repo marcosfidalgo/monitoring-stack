@@ -46,6 +46,8 @@ config:
       endpoint: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
       default_labels_enabled:
         resource: true
+      headers:
+        X-Scope-OrgID: self-monitoring
 
   service:
     telemetry:
