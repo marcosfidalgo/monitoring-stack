@@ -25,7 +25,7 @@ loki:
       # Key associated with the Azure Blob Storage account
       #accountKey: <your-account-key>
       # Comprehensive connection string for Azure Blob Storage account (Can be used to replace endpoint, accountName, and accountKey)
-      connectionString: DefaultEndpointsProtocol=https;AccountName=texasloki;AccountKey=nVveoKpMWdxfKT4KwKxpgutq8AdhVPBtr1wiLPBEaleLWushVcpsT1zDc3NrV3GkAiEDyyoNUO2M+AStxZ4jmw==;EndpointSuffix=core.windows.net
+      connectionString: "secret"
       # Flag indicating whether to use Azure Managed Identity for authentication
       useManagedIdentity: false
       # Flag indicating whether to use a federated token for authentication
