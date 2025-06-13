@@ -7,7 +7,7 @@ helm repo update
 kubectl create namespace monitoring
 
 # Instalar Prometheus + Grafana
-helm install monitoring prometheus-community/kube-prometheus-stack \
+helm install grafana prometheus-community/kube-prometheus-stack \
   -f kube-prometheus-stack-values.yaml \
   -n monitoring
 
