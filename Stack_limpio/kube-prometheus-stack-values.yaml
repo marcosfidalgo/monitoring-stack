@@ -34,7 +34,7 @@ prometheus:
 alertmanager:
   alertmanagerSpec:
     nodeSelector:
-      agentpool: texassystem
+      agentpool: texassystem #1
     tolerations:
       - key: "kubernetes.azure.com/mode"
         operator: "Equal"
