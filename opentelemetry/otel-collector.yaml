@@ -2,24 +2,8 @@ mode: deployment
 
 image:
   repository: otel/opentelemetry-collector-contrib
-  tag: 0.101.0
-
-nodeSelector:
-  kubernetes.azure.com/agentpool: texassystem
-
-tolerations:
-  - key: "dedicated"
-    operator: "Equal"
-    value: "texassystem"
-    effect: "NoSchedule"
-
-resources:
-  limits:
-    memory: 512Mi
-    cpu: 500m
-  requests:
-    memory: 256Mi
-    cpu: 250m
+  tag: "0.125.0"  # Última versión estable conocida y probada (ajústala si tienes una más reciente)
+  pullPolicy: IfNotPresent
 
 config:
   receivers:
@@ -32,35 +16,26 @@ config:
 
   processors:
     batch: {}
-    memory_limiter:
-      check_interval: 5s
-      limit_mib: 400
-      spike_limit_mib: 100
+    resource:
+      attributes:
+        - key: service.name
+          value: otelcol
+          action: upsert
 
   exporters:
-    otlp/tempo:
-      endpoint: tempo.monitoring.svc.cluster.local:4317
+    otlphttp:
+      endpoint: http://loki-gateway.monitoring.svc.cluster.local:3100
       tls:
         insecure: true
-    loki:
-      endpoint: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
-      default_labels_enabled:
-        resource: true
       headers:
-        X-Scope-OrgID: self-monitoring
+        X-Scope-OrgID: "default"
+
+    debug:
+      verbosity: detailed
 
   service:
-    telemetry:
-      metrics:
-        address: 0.0.0.0:8889
-
     pipelines:
-      traces:
-        receivers: [otlp]
-        processors: [batch]
-        exporters: [otlp/tempo]
-
       logs:
         receivers: [otlp]
-        processors: [batch, memory_limiter]
-        exporters: [loki]
+        processors: [resource, batch]
+        exporters: [otlphttp, debug]

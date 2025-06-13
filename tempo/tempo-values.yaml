@@ -1,0 +1,45 @@
+nodeSelector:
+  kubernetes.azure.com/agentpool: texassystem  # Se asegura que los pods de Tempo estén en el nodo adecuado
+
+tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "texassystem"
+    effect: "NoSchedule"  # Permite que el pod se ejecute en nodos marcados como "dedicados"
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi  # Persistencia para los datos de trazas
+
+tempo:
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces  # Almacenamiento local de las trazas (no S3, GCS, etc.)
+
+  receivers:
+    otlp:
+      protocols:
+        grpc: {}  # Habilita OTLP gRPC (puerto 4317)
+        http: {}  # Habilita OTLP HTTP  (puerto 4318)
+
+  metricsGenerator:
+    enabled: true  # Opcional, genera métricas a partir de las trazas
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+    - name: http
+      port: 3100
+      targetPort: 3100  # Interfaz web y lectura de trazas

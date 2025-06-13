@@ -1,0 +1,50 @@
+grafana:
+  adminUser: admin
+  adminPassword: "Excluyisteis(Bandidos)"
+  persistence:
+    enabled: true
+    storageClassName: default
+    size: 10Gi
+  nodeSelector:
+    agentpool: texassystem
+  tolerations:
+    - key: "kubernetes.azure.com/mode"
+      operator: "Equal"
+      value: "system"
+      effect: "NoSchedule"
+
+prometheus:
+  prometheusSpec:
+    nodeSelector:
+      agentpool: texassystem
+    tolerations:
+      - key: "kubernetes.azure.com/mode"
+        operator: "Equal"
+        value: "system"
+        effect: "NoSchedule"
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+alertmanager:
+  alertmanagerSpec:
+    nodeSelector:
+      agentpool: texassystem
+    tolerations:
+      - key: "kubernetes.azure.com/mode"
+        operator: "Equal"
+        value: "system"
+        effect: "NoSchedule"
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: default
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi

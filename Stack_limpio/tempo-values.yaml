@@ -1,0 +1,17 @@
+tempo:
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo
+  persistence:
+    enabled: true
+    storageClassName: default
+    size: 10Gi
+  nodeSelector:
+    agentpool: texassystem
+  tolerations:
+    - key: "kubernetes.azure.com/mode"
+      operator: "Equal"
+      value: "system"
+      effect: "NoSchedule"

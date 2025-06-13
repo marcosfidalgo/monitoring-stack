@@ -1,0 +1,21 @@
+loki:
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClassName: default
+  nodeSelector:
+    agentpool: texassystem
+  tolerations:
+    - key: "kubernetes.azure.com/mode"
+      operator: "Equal"
+      value: "system"
+      effect: "NoSchedule"
+
+promtail:
+  nodeSelector:
+    agentpool: texassystem
+  tolerations:
+    - key: "kubernetes.azure.com/mode"
+      operator: "Equal"
+      value: "system"
+      effect: "NoSchedule"
